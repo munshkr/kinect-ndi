@@ -1,3 +1,3 @@
 ofxKinect
 ofxNDI
-#ofxOpenCv
+ofxOpenCv
