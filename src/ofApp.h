@@ -3,6 +3,7 @@
 #include "ofMain.h"
 #include "ofxOpenCv.h"
 #include "ofxKinect.h"
+#include "ofxNDI.h"
 
 class ofApp : public ofBaseApp
 {
@@ -28,6 +29,11 @@ public:
 	void gotMessage(ofMessage msg);
 
 	ofxKinect kinect;
+
+	ofxNDIsender ndiSender;		 // NDI sender
+	unsigned int senderWidth;	 // Width of the sender output
+	unsigned int senderHeight; // Height of the sender output
+	ofFbo ndiFbo;							 // Fbo used for graphics and sending
 
 	ofxCvColorImage colorImg;
 

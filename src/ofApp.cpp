@@ -1,9 +1,30 @@
 #include "ofApp.h"
+#include "cstring"
+
+const char *SENDER_NAME = "kinect-ndi";
+// Set the dimensions of the sender output here
+// This is independent of the size of the display window
+const int SENDER_WIDTH = 400;
+const int SENDER_HEIGHT = 300;
 
 //--------------------------------------------------------------
 void ofApp::setup()
 {
   ofSetLogLevel(OF_LOG_VERBOSE);
+
+  ofLogNotice() << ndiSender.GetNDIversion() << " (https://www.ndi.tv/)" << endl;
+
+  // Create an RGBA fbo for collection of data
+  ndiFbo.allocate(SENDER_WIDTH, SENDER_HEIGHT, GL_RGBA);
+
+  // Optionally set NDI asynchronous sending
+  // instead of clocked at the specified frame rate (60fps default)
+  ndiSender.SetAsync();
+
+  // Create a sender with default RGBA output format
+  ndiSender.CreateSender(SENDER_NAME, SENDER_WIDTH, SENDER_HEIGHT);
+
+  ofLogNotice() << "Created NDI sender [" << SENDER_NAME << "] (" << senderWidth << "x" << senderHeight << ")" << endl;
 
   // enable depth->video image calibration
   kinect.setRegistration(true);
@@ -149,6 +170,13 @@ void ofApp::draw()
   }
 
   ofDrawBitmapString(reportStream.str(), 20, 652);
+
+  ndiFbo.begin();
+  // grayImage.draw(0, 0);
+  kinect.drawDepth(0, 0, SENDER_WIDTH, SENDER_HEIGHT);
+  ndiFbo.end();
+
+  ndiSender.SendImage(ndiFbo);
 }
 
 void ofApp::drawPointCloud()
